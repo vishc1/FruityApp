@@ -2,54 +2,25 @@
 
 A Next.js web application that connects neighbors to share excess fruit from their yards. Built with privacy-first features and real-time messaging.
 
-## Features
 
-- 🔐 **Secure Authentication** - Email-based authentication via Supabase
-- 📍 **GPS Property Verification** - Verify property ownership within 50 meters
-- 🗺️ **Interactive Map** - Leaflet/OpenStreetMap integration (no API key needed)
-- 💬 **Real-time Messaging** - Chat between fruit givers and receivers
-- 🏡 **Privacy Protection** - Address fuzzing (±500m) for public listings
-- 🍎 **Easy Listing Management** - Create, edit, and manage fruit listings
-- 📱 **Mobile Responsive** - Works on all devices
 
-## Tech Stack
 
-- **Framework**: Next.js 16 (App Router)
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **Maps**: Leaflet + React-Leaflet (OpenStreetMap)
-- **Geocoding**: Nominatim (free, no API key)
-- **Styling**: Tailwind CSS
-- **Notifications**: react-hot-toast
 
-## Getting Started
 
-### Prerequisites
+### 1 Prerequisites
 
-- Node.js 18+
 - npm or yarn
 - Supabase account (free tier works)
 
-### 1. Clone the Repository
 
-```bash
-git clone <your-repo-url>
-cd fruity-app
-```
 
-### 2. Install Dependencies
-
-```bash
-npm install
-```
-
-### 3. Set Up Supabase
+### 2. Set Up Supabase
 
 1. Create a new project at [supabase.com](https://supabase.com)
 2. Go to Project Settings > API
 3. Copy your project URL and anon key
 
-### 4. Run Database Setup
+### 3. Run Database Setup
 
 1. Open your Supabase project
 2. Go to SQL Editor
@@ -60,17 +31,7 @@ npm install
 
 Copy `.env.example` to `.env.local`:
 
-```bash
-cp .env.example .env.local
-```
 
-Update `.env.local` with your Supabase credentials:
-
-```env
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
-```
 
 ### 6. Run Development Server
 
@@ -95,16 +56,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 6. Click "Deploy"
 
 ### Option 2: Deploy via CLI
+bash
 
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-
-# Follow the prompts and add environment variables when asked
-```
 
 ### Post-Deployment
 
@@ -115,36 +68,7 @@ vercel
 
 ## Database Schema
 
-The app uses the following tables:
 
-- **users** - User profiles with display names
-- **properties** - Verified property locations
-- **listings** - Fruit listings with fuzzy locations
-- **pickup_requests** - Pickup requests between users
-- **messages** - Chat messages for coordination
-
-All tables have Row Level Security (RLS) policies for data protection.
-
-## Privacy & Security
-
-- Exact addresses are never shown publicly
-- Listings use approximate coordinates (±500m)
-- GPS verification required for property setup
-- RLS policies protect user data
-- Full address revealed only after pickup acceptance
-
-## Development
-
-```bash
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-```
 
 ## License
 
