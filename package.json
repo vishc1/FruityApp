@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
-    "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.87.3",
     "class-variance-authority": "^0.7.1",
@@ -20,7 +19,6 @@
     "lucide-react": "^0.561.0",
     "mapbox-gl": "^3.17.0",
     "next": "16.0.10",
-    "nominatim-browser": "^2.1.0",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "react-hook-form": "^7.68.0",
