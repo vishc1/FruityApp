@@ -105,7 +105,7 @@ export default function LoginPage() {
             .eq('id', data.user.id)
             .single()
 
-          if (!profile || profileError?.code === 'PGRST116') {
+          if (!profile || (profileError as any)?.code === 'PGRST116') {
             // Create profile if it doesn't exist
             await supabase.from('users').insert({
               id: data.user.id,

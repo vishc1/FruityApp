@@ -6,19 +6,6 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
-  // Check if we have API keys
-  const hasApiKeys =
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL.length > 0 &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY.length > 0
-
-  // In mock mode, skip auth checks and allow all routes
-  if (!hasApiKeys) {
-    // Mock mode - allow all requests through
-    return supabaseResponse
-  }
-
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
