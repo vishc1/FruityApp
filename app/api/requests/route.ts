@@ -13,7 +13,26 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
   const type = searchParams.get('type') || 'outgoing'
 
-  if (type === 'outgoing') {
+  if (type === 'history') {
+    // Completed/declined/cancelled requests for the current user
+    const { data, error } = await supabase
+      .from('pickup_requests')
+      .select(`
+        *,
+        listings:listing_id (
+          id, fruit_type, quantity, city, state
+        )
+      `)
+      .eq('requester_id', user.id)
+      .in('status', ['completed', 'declined', 'cancelled', 'expired'])
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json(data)
+  } else if (type === 'outgoing') {
     // Requests made by current user
     const { data, error } = await supabase
       .from('pickup_requests')

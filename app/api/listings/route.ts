@@ -2,18 +2,37 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { geocodeAddress, fuzzyLocation } from '@/lib/geocoding'
 
-// GET /api/listings - Fetch all active listings
+function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 3958.8 // Earth radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLng = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+// GET /api/listings - Fetch active listings
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
 
   const { searchParams } = new URL(request.url)
   const fruitType = searchParams.get('fruit_type')
+  const userLat = searchParams.get('lat') ? parseFloat(searchParams.get('lat')!) : null
+  const userLng = searchParams.get('lng') ? parseFloat(searchParams.get('lng')!) : null
+  const radiusMiles = searchParams.get('radius') ? parseFloat(searchParams.get('radius')!) : null
+  const userId = searchParams.get('user_id')
 
   let query = supabase
     .from('listings')
-    .select('id, user_id, fruit_type, quantity, description, city, state, approximate_lat, approximate_lng, available_start, available_end, pickup_notes, status, created_at')
-    .eq('status', 'active')
+    .select('id, user_id, fruit_type, quantity, description, city, state, approximate_lat, approximate_lng, available_start, available_end, pickup_notes, status, availability_status, created_at')
     .order('created_at', { ascending: false })
+
+  if (userId) {
+    // Profile view: show all non-cancelled listings for this user
+    query = query.eq('user_id', userId).neq('status', 'cancelled')
+  } else {
+    query = query.eq('status', 'active')
+  }
 
   if (fruitType && fruitType !== 'all') {
     query = query.eq('fruit_type', fruitType)
@@ -25,7 +44,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json(data)
+  let result = data || []
+
+  // Client-side radius filter using haversine
+  if (userLat !== null && userLng !== null && radiusMiles !== null) {
+    result = result
+      .map((listing: any) => ({
+        ...listing,
+        distance_miles: haversineDistance(userLat, userLng, listing.approximate_lat, listing.approximate_lng),
+      }))
+      .filter((listing: any) => listing.distance_miles <= radiusMiles)
+      .sort((a: any, b: any) => a.distance_miles - b.distance_miles)
+  }
+
+  return NextResponse.json(result)
 }
 
 // POST /api/listings - Create new listing

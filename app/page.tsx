@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import Nav from '@/components/Nav'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -7,50 +8,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-green-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-orange-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <span className="text-4xl">🍊</span>
-              <h1 className="text-2xl font-bold text-orange-600">Fruity</h1>
-            </div>
-            <nav className="flex items-center gap-4">
-              <Link
-                href="/map"
-                className="text-gray-700 hover:text-orange-600 font-medium transition-colors"
-              >
-                Find Fruit
-              </Link>
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="text-gray-700 hover:text-orange-600 font-medium transition-colors"
-                  >
-                    Dashboard
-                  </Link>
-                  <form action="/auth/signout" method="post">
-                    <button
-                      type="submit"
-                      className="text-gray-600 hover:text-gray-900 text-sm"
-                    >
-                      Sign Out
-                    </button>
-                  </form>
-                </>
-              ) : (
-                <Link
-                  href="/login"
-                  className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-2 rounded-lg transition-colors"
-                >
-                  Sign In
-                </Link>
-              )}
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Nav initialUser={user} />
 
       {/* Hero Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -145,6 +103,85 @@ export default async function Home() {
                 <p className="text-orange-50">Connect with neighbors nearby.</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Coming Soon / Roadmap */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-12">
+          <span className="inline-block bg-orange-100 text-orange-700 text-sm font-semibold px-4 py-1 rounded-full mb-4">
+            Roadmap
+          </span>
+          <h3 className="text-3xl font-bold text-gray-900">Coming Soon</h3>
+          <p className="text-gray-500 mt-2">Features we're actively working on</p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Discovery & Map */}
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+            <div className="text-3xl mb-3">🗺️</div>
+            <h4 className="text-lg font-bold text-gray-900 mb-3">Discovery & Map</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Radius search — listings within X miles</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Availability badges — Available / Almost Gone / Picked Clean</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Harvest season windows with auto-expiry</li>
+            </ul>
+          </div>
+
+          {/* Listing Enhancements */}
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+            <div className="text-3xl mb-3">📸</div>
+            <h4 className="text-lg font-bold text-gray-900 mb-3">Listing Enhancements</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Photo uploads of the tree or fruit</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Access notes — gate codes, pickup instructions</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Waitlist if a listing is already claimed</li>
+            </ul>
+          </div>
+
+          {/* Scheduling */}
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+            <div className="text-3xl mb-3">📅</div>
+            <h4 className="text-lg font-bold text-gray-900 mb-3">Pickup Scheduling</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Propose a time slot; owner confirms or counters</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Request history — completed, declined, expired</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Expiry reminders for stale listings</li>
+            </ul>
+          </div>
+
+          {/* Social & Trust */}
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+            <div className="text-3xl mb-3">⭐</div>
+            <h4 className="text-lg font-bold text-gray-900 mb-3">Social & Trust</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Ratings & reviews after each pickup</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Neighbor profiles with listing history</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Verified neighbor badge</li>
+            </ul>
+          </div>
+
+          {/* Notifications */}
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+            <div className="text-3xl mb-3">🔔</div>
+            <h4 className="text-lg font-bold text-gray-900 mb-3">Notifications</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Email alerts for new requests & acceptances</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Subscribe to fruit types nearby</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Reminders to update or remove old listings</li>
+            </ul>
+          </div>
+
+          {/* Community */}
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100">
+            <div className="text-3xl mb-3">🏘️</div>
+            <h4 className="text-lg font-bold text-gray-900 mb-3">Community</h4>
+            <ul className="space-y-2 text-sm text-gray-600">
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Neighborhood leaderboard — most fruit shared</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Announcements board for local harvests</li>
+              <li className="flex gap-2"><span className="text-orange-400 mt-0.5">◦</span> Invite codes for trusted neighbor networks</li>
+            </ul>
           </div>
         </div>
       </section>

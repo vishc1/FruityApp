@@ -62,19 +62,12 @@ export async function PATCH(
 
   try {
     const body = await request.json()
-    const { status } = body
-
-    if (!status) {
-      return NextResponse.json({ error: 'Status is required' }, { status: 400 })
-    }
+    const { status, proposed_time, confirmed_time, schedule_status } = body
 
     // Get request details
     const { data: pickupRequest, error: fetchError } = await supabase
       .from('pickup_requests')
-      .select(`
-        *,
-        listings:listing_id (user_id)
-      `)
+      .select(`*, listings:listing_id (user_id)`)
       .eq('id', id)
       .single()
 
@@ -84,28 +77,52 @@ export async function PATCH(
 
     const listing = pickupRequest.listings as any
 
-    // Check permissions based on status change
-    if (status === 'accepted' || status === 'declined') {
-      // Only listing owner can accept/decline
-      if (listing.user_id !== user.id) {
-        return NextResponse.json({ error: 'Only listing owner can accept or decline' }, { status: 403 })
+    // Build update object
+    const updates: Record<string, any> = {}
+
+    if (status) {
+      if (status === 'accepted' || status === 'declined') {
+        if (listing.user_id !== user.id) {
+          return NextResponse.json({ error: 'Only listing owner can accept or decline' }, { status: 403 })
+        }
+      } else if (status === 'cancelled') {
+        if (pickupRequest.requester_id !== user.id) {
+          return NextResponse.json({ error: 'Only requester can cancel' }, { status: 403 })
+        }
+      } else if (status === 'completed') {
+        if (pickupRequest.requester_id !== user.id && listing.user_id !== user.id) {
+          return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+        }
       }
-    } else if (status === 'cancelled') {
-      // Only requester can cancel
-      if (pickupRequest.requester_id !== user.id) {
-        return NextResponse.json({ error: 'Only requester can cancel' }, { status: 403 })
-      }
-    } else if (status === 'completed') {
-      // Both can mark as completed
-      if (pickupRequest.requester_id !== user.id && listing.user_id !== user.id) {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
-      }
+      updates.status = status
     }
 
-    // Update request
+    // Scheduling: requester proposes, owner confirms or counter-proposes
+    if (proposed_time !== undefined) {
+      const isOwner = listing.user_id === user.id
+      const isRequester = pickupRequest.requester_id === user.id
+      if (!isOwner && !isRequester) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
+      }
+      updates.proposed_time = proposed_time
+      updates.schedule_status = schedule_status || (isRequester ? 'proposed' : 'countered')
+    }
+
+    if (confirmed_time !== undefined) {
+      if (listing.user_id !== user.id) {
+        return NextResponse.json({ error: 'Only owner can confirm time' }, { status: 403 })
+      }
+      updates.confirmed_time = confirmed_time
+      updates.schedule_status = 'confirmed'
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json({ error: 'Nothing to update' }, { status: 400 })
+    }
+
     const { data, error } = await supabase
       .from('pickup_requests')
-      .update({ status })
+      .update(updates)
       .eq('id', id)
       .select()
       .single()

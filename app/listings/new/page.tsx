@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Nav from '@/components/Nav'
 import { FRUIT_TYPES, QUANTITY_OPTIONS } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { Property } from '@/lib/types/database'
@@ -87,15 +88,7 @@ export default function NewListingPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-3xl">🍊</span>
-            <h1 className="text-xl font-bold text-orange-600">Fruity</h1>
-          </Link>
-        </div>
-      </header>
+      <Nav />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">

@@ -19,6 +19,9 @@ export interface Property {
   updated_at: string
 }
 
+export type AvailabilityStatus = 'available' | 'almost_gone' | 'picked_clean'
+export type ScheduleStatus = 'unscheduled' | 'proposed' | 'confirmed' | 'countered'
+
 export interface Listing {
   id: string
   user_id: string
@@ -36,6 +39,7 @@ export interface Listing {
   available_end: string
   pickup_notes: string | null
   status: 'active' | 'pending' | 'completed' | 'cancelled'
+  availability_status: AvailabilityStatus
   created_at: string
   updated_at: string
 }
@@ -45,7 +49,10 @@ export interface PickupRequest {
   listing_id: string
   requester_id: string
   message: string | null
-  status: 'pending' | 'accepted' | 'declined' | 'completed' | 'cancelled'
+  status: 'pending' | 'accepted' | 'declined' | 'completed' | 'cancelled' | 'expired'
+  proposed_time: string | null
+  confirmed_time: string | null
+  schedule_status: ScheduleStatus
   created_at: string
   updated_at: string
 }
@@ -57,6 +64,35 @@ export interface Message {
   content: string
   created_at: string
   read_at: string | null
+}
+
+export interface Rating {
+  id: string
+  pickup_request_id: string
+  rater_id: string
+  ratee_id: string
+  stars: number
+  review: string | null
+  created_at: string
+}
+
+export interface WaitlistEntry {
+  id: string
+  listing_id: string
+  user_id: string
+  created_at: string
+}
+
+export interface Announcement {
+  id: string
+  author_id: string
+  title: string
+  body: string
+  city: string | null
+  state: string | null
+  is_deleted: boolean
+  created_at: string
+  updated_at: string
 }
 
 // Public listing type (without full address)
@@ -77,4 +113,19 @@ export interface PickupRequestWithDetails extends PickupRequest {
 
 export interface MessageWithSender extends Message {
   users?: User
+}
+
+export interface RatingWithDetails extends Rating {
+  rater?: User
+}
+
+export interface ProfileData {
+  id: string
+  display_name: string | null
+  email: string
+  member_since: string
+  listings_count: number
+  pickups_given: number
+  avg_rating: number | null
+  rating_count: number
 }

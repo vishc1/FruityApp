@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
+import { createClient } from '@/lib/supabase/client'
+import Nav from '@/components/Nav'
 
 interface PickupRequest {
   id: string
@@ -38,8 +40,13 @@ export default function MessagesPage() {
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
   useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setCurrentUserId(user.id)
+    })
     fetchRequests()
   }, [])
 
@@ -123,23 +130,7 @@ export default function MessagesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-3xl">🍊</span>
-              <h1 className="text-xl font-bold text-orange-600">Fruity</h1>
-            </Link>
-            <Link
-              href="/dashboard"
-              className="text-gray-700 hover:text-orange-600 font-medium transition-colors"
-            >
-              Dashboard
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Nav />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Messages</h1>
@@ -215,22 +206,31 @@ export default function MessagesPage() {
                       <p>No messages yet. Start the conversation!</p>
                     </div>
                   ) : (
-                    messages.map((msg) => (
-                      <div
-                        key={msg.id}
-                        className="flex flex-col"
-                      >
-                        <div className="text-xs text-gray-500 mb-1">
-                          {msg.sender.email}
+                    messages.map((msg) => {
+                      const isSent = msg.sender_id === currentUserId
+                      return (
+                        <div
+                          key={msg.id}
+                          className={`flex flex-col ${isSent ? 'items-end' : 'items-start'}`}
+                        >
+                          {!isSent && (
+                            <div className="text-xs text-gray-500 mb-1">
+                              {msg.sender.email}
+                            </div>
+                          )}
+                          <div className={`rounded-2xl px-4 py-3 max-w-[70%] ${
+                            isSent
+                              ? 'bg-orange-500 text-white rounded-br-sm'
+                              : 'bg-gray-100 text-gray-900 rounded-bl-sm'
+                          }`}>
+                            <p>{msg.content}</p>
+                            <p className={`text-xs mt-1 ${isSent ? 'text-orange-100' : 'text-gray-500'}`}>
+                              {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                          </div>
                         </div>
-                        <div className="bg-gray-100 rounded-lg p-3 max-w-[70%]">
-                          <p className="text-gray-900">{msg.content}</p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {new Date(msg.created_at).toLocaleString()}
-                          </p>
-                        </div>
-                      </div>
-                    ))
+                      )
+                    })
                   )}
                 </div>
 

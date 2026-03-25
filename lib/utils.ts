@@ -23,6 +23,26 @@ export function formatDateTime(date: string | Date): string {
   })
 }
 
+export const FRUIT_EMOJIS: Record<string, string> = {
+  'Apples': '🍎',
+  'Apricots': '🍑',
+  'Avocados': '🥑',
+  'Blackberries': '🫐',
+  'Cherries': '🍒',
+  'Figs': '🌿',
+  'Grapefruits': '🍊',
+  'Grapes': '🍇',
+  'Lemons': '🍋',
+  'Limes': '🍋',
+  'Oranges': '🍊',
+  'Peaches': '🍑',
+  'Pears': '🍐',
+  'Plums': '🍑',
+  'Pomegranates': '🍎',
+  'Persimmons': '🧡',
+  'Other': '🌳',
+}
+
 export const FRUIT_TYPES = [
   'Apples',
   'Apricots',

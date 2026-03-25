@@ -16,7 +16,7 @@ export async function POST(
 
   try {
     const body = await request.json()
-    const { message } = body
+    const { message, proposed_time } = body
 
     // Check if listing exists and is active
     const { data: listing } = await supabase
@@ -37,6 +37,19 @@ export async function POST(
       return NextResponse.json({ error: 'You cannot request your own listing' }, { status: 400 })
     }
 
+    // Prevent duplicate active requests
+    const { data: existing } = await supabase
+      .from('pickup_requests')
+      .select('id')
+      .eq('listing_id', id)
+      .eq('requester_id', user.id)
+      .in('status', ['pending', 'accepted'])
+      .maybeSingle()
+
+    if (existing) {
+      return NextResponse.json({ error: 'You already have an active request for this listing' }, { status: 409 })
+    }
+
     // Create request
     const { data, error } = await supabase
       .from('pickup_requests')
@@ -44,15 +57,13 @@ export async function POST(
         listing_id: id,
         requester_id: user.id,
         message,
+        proposed_time: proposed_time || null,
+        schedule_status: proposed_time ? 'proposed' : 'unscheduled',
       })
       .select()
       .single()
 
     if (error) {
-      // Handle duplicate request
-      if (error.code === '23505') {
-        return NextResponse.json({ error: 'You already have a request for this listing' }, { status: 400 })
-      }
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
