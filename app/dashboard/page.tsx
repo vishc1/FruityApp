@@ -100,13 +100,13 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) { setUser(user); setLoading(false) }
+      else router.push('/login')
+    })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      if (session?.user) {
-        setUser(session.user)
-        setLoading(false)
-      } else if (_event === 'INITIAL_SESSION' || _event === 'SIGNED_OUT') {
-        router.push('/login')
-      }
+      if (session?.user) { setUser(session.user); setLoading(false) }
+      else if (_event === 'SIGNED_OUT') router.push('/login')
     })
     return () => { subscription.unsubscribe() }
   }, [])
