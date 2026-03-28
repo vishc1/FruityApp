@@ -100,76 +100,69 @@ export async function getNearbyAddresses(lat: number, lng: number): Promise<Arra
   lng: number
   distance: number
 }>> {
-  // Search for nearby addresses within ~100 meter radius
-  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&zoom=18`
-
   try {
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'FruityApp/1.0',
-      },
-    })
+    // Step 1: Reverse geocode to get current location details
+    const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&zoom=18`
+    const reverseRes = await fetch(reverseUrl, { headers: { 'User-Agent': 'FruityApp/1.0' } })
+    if (!reverseRes.ok) throw new Error('Failed to get nearby addresses')
+    const reverseData = await reverseRes.json()
+    if (!reverseData || reverseData.error) throw new Error('Could not find addresses near this location')
 
-    if (!response.ok) {
-      throw new Error('Failed to get nearby addresses')
-    }
-
-    const data = await response.json()
-
-    if (!data || data.error) {
-      throw new Error('Could not find addresses near this location')
-    }
-
-    const addressDetails = data.address || {}
-    const baseAddress = data.display_name
-
-    // Get the street and generate 3 nearby address options
+    const addressDetails = reverseData.address || {}
     const street = addressDetails.road || addressDetails.street || ''
-    const houseNumber = addressDetails.house_number || ''
     const city = addressDetails.city || addressDetails.town || addressDetails.village || addressDetails.municipality || ''
     const state = addressDetails.state || ''
     const zip = addressDetails.postcode || ''
 
-    const results = []
+    const seen = new Set<string>()
+    const results: Array<{ address: string; city: string; state: string; zip_code: string; lat: number; lng: number; distance: number }> = []
 
-    // Option 1: Exact detected location
-    results.push({
-      address: baseAddress,
-      city,
-      state,
-      zip_code: zip,
-      lat: parseFloat(data.lat),
-      lng: parseFloat(data.lon),
-      distance: 0
-    })
-
-    // If we have house number and street, generate nearby options
-    if (houseNumber && street) {
-      const baseNumber = parseInt(houseNumber.replace(/\D/g, ''))
-
-      if (!isNaN(baseNumber)) {
-        // Generate 4 nearby house numbers (2 before, 2 after)
-        const offsets = [-4, -2, 2, 4]
-        offsets.forEach((offset, i) => {
-          const nearNumber = baseNumber + offset
-          if (nearNumber > 0) {
-            const latOffset = offset * 0.00001
-            const nearLat = lat + latOffset
-            results.push({
-              address: `${nearNumber} ${street}, ${city}, ${state} ${zip}`,
-              city,
-              state,
-              zip_code: zip,
-              lat: nearLat,
-              lng: lng,
-              distance: calculateDistance(lat, lng, nearLat, lng)
-            })
-          }
-        })
+    const addResult = (address: string, rLat: number, rLng: number) => {
+      const key = address.toLowerCase().trim()
+      if (!seen.has(key)) {
+        seen.add(key)
+        results.push({ address, city, state, zip_code: zip, lat: rLat, lng: rLng, distance: calculateDistance(lat, lng, rLat, rLng) })
       }
     }
 
-    // Return up to 5 results
+    // Option 1: Exact detected address
+    addResult(reverseData.display_name, parseFloat(reverseData.lat), parseFloat(reverseData.lon))
+
+    // Step 2: Search for real nearby addresses using bounding box (~200m radius)
+    const delta = 0.002
+    const bbox = `${lng - delta},${lat + delta},${lng + delta},${lat - delta}`
+    const searchUrl = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=10&bounded=1&viewbox=${bbox}&q=${encodeURIComponent(street + ' ' + city)}`
+
+    await new Promise(r => setTimeout(r, 500)) // Respect Nominatim rate limit
+
+    const searchRes = await fetch(searchUrl, { headers: { 'User-Agent': 'FruityApp/1.0' } })
+    if (searchRes.ok) {
+      const searchData = await searchRes.json()
+      for (const item of searchData || []) {
+        if (results.length >= 5) break
+        const itemAddr = item.address || {}
+        const itemCity = itemAddr.city || itemAddr.town || itemAddr.village || itemAddr.municipality || city
+        if (itemCity.toLowerCase() !== city.toLowerCase()) continue
+        addResult(item.display_name, parseFloat(item.lat), parseFloat(item.lon))
+      }
+    }
+
+    // Step 3: If still under 5, fill with generated house numbers
+    const houseNumber = addressDetails.house_number || ''
+    if (results.length < 5 && houseNumber && street) {
+      const baseNumber = parseInt(houseNumber.replace(/\D/g, ''))
+      if (!isNaN(baseNumber)) {
+        for (const offset of [-6, -4, -2, 2, 4, 6]) {
+          if (results.length >= 5) break
+          const nearNumber = baseNumber + offset
+          if (nearNumber > 0) {
+            const nearLat = lat + offset * 0.000015
+            addResult(`${nearNumber} ${street}, ${city}, ${state} ${zip}`, nearLat, lng)
+          }
+        }
+      }
+    }
+
     return results.slice(0, 5)
   } catch (error: any) {
     console.error('Error getting nearby addresses:', error)
