@@ -206,7 +206,6 @@ export default function NewListingPage() {
                 value={formData.available_start}
                 onChange={handleChange}
                 required
-                min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </div>
@@ -221,7 +220,7 @@ export default function NewListingPage() {
                 value={formData.available_end}
                 onChange={handleChange}
                 required
-                min={formData.available_start || new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().split('T')[0]}
+                min={formData.available_start}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </div>
