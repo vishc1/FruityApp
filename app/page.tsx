@@ -39,6 +39,79 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Key Features */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-12">
+          <h3 className="text-3xl font-bold text-gray-900 mb-3">Everything You Need</h3>
+          <p className="text-gray-500 text-lg">A full platform for sharing fruit with your neighborhood</p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">🗺️</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Live Fruit Map</h4>
+              <p className="text-sm text-gray-600">Browse all available fruit near you on an interactive map. Filter by type and search by distance.</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">🔒</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Privacy First</h4>
+              <p className="text-sm text-gray-600">Your exact address is never shown. Only a fuzzy location (±500m) appears on the map until a pickup is accepted.</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">💬</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">In-App Messaging</h4>
+              <p className="text-sm text-gray-600">Chat directly with neighbors to coordinate pickup times without sharing personal contact info.</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">⭐</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Ratings & Reviews</h4>
+              <p className="text-sm text-gray-600">Rate each pickup and leave reviews. Build trust in your community through a public reputation system.</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">📅</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Pickup Scheduling</h4>
+              <p className="text-sm text-gray-600">Propose, confirm, or counter pickup times. Everyone stays on the same page with no back-and-forth confusion.</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">🏆</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Community Leaderboard</h4>
+              <p className="text-sm text-gray-600">See who's sharing the most fruit. Earn a Verified Neighbor badge and climb the neighborhood rankings.</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">📋</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Waitlist System</h4>
+              <p className="text-sm text-gray-600">Listing already picked clean? Join the waitlist and get notified when more fruit is available.</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">📢</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Community Board</h4>
+              <p className="text-sm text-gray-600">Post announcements about big harvests, seasonal fruit, or anything your neighborhood should know.</p>
+            </div>
+          </div>
+          <div className="bg-white rounded-2xl p-6 shadow-md border border-gray-100 flex gap-4">
+            <span className="text-3xl shrink-0">📸</span>
+            <div>
+              <h4 className="font-bold text-gray-900 mb-1">Photo Listings</h4>
+              <p className="text-sm text-gray-600">Add a photo of your tree or fruit so neighbors know exactly what they're picking up.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <h3 className="text-3xl font-bold text-center mb-12 text-gray-900">How It Works</h3>
