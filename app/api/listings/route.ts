@@ -82,13 +82,19 @@ export async function POST(request: NextRequest) {
     let coords = { lat: parseFloat(lat), lng: parseFloat(lng) }
     let city = '', state = '', zip_code = ''
 
-    // If no coords provided, fall back to geocoding
-    if (!lat || !lng) {
-      const geoResult = await geocodeAddress(full_address)
-      coords = { lat: geoResult.lat, lng: geoResult.lng }
-      city = geoResult.city
-      state = geoResult.state
-      zip_code = geoResult.zip_code
+    // If coords are missing or invalid, pull from the user's saved property
+    if (!lat || !lng || isNaN(coords.lat) || isNaN(coords.lng)) {
+      const { data: property } = await supabase
+        .from('properties')
+        .select('lat, lng')
+        .eq('user_id', user.id)
+        .single()
+
+      if (property?.lat && property?.lng) {
+        coords = { lat: property.lat, lng: property.lng }
+      } else {
+        return NextResponse.json({ error: 'Property location not found. Please re-setup your property at /property/setup' }, { status: 400 })
+      }
     }
 
     // Add fuzzy offset for privacy
