@@ -14,6 +14,12 @@ export default function Nav({ initialUser }: NavProps) {
   const [user, setUser] = useState<any>(initialUser ?? undefined)
   const pathname = usePathname()
 
+  const handleSignOut = async () => {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    window.location.replace('/')
+  }
+
   useEffect(() => {
     // Only fetch client-side if not pre-populated
     if (initialUser !== undefined) return
@@ -64,11 +70,12 @@ export default function Nav({ initialUser }: NavProps) {
                 >
                   + Share Fruit
                 </Link>
-                <form action="/auth/signout" method="post">
-                  <button type="submit" className="text-sm text-gray-500 hover:text-gray-800 transition-colors">
-                    Sign Out
-                  </button>
-                </form>
+                <button
+                  onClick={handleSignOut}
+                  className="text-sm text-gray-500 hover:text-gray-800 transition-colors"
+                >
+                  Sign Out
+                </button>
               </>
             ) : user === null ? (
               <Link
