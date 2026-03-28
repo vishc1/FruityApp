@@ -119,6 +119,7 @@ export async function POST(request: NextRequest) {
         available_start,
         available_end,
         pickup_notes,
+        availability_status: 'available',
       })
       .select()
       .single()
