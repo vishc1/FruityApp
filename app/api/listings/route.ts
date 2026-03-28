@@ -72,18 +72,27 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { fruit_type, quantity, description, full_address, available_start, available_end, pickup_notes } = body
+    const { fruit_type, quantity, description, full_address, available_start, available_end, pickup_notes, lat, lng } = body
 
     // Validate required fields
     if (!fruit_type || !quantity || !full_address || !available_start || !available_end) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Geocode address
-    const geoResult = await geocodeAddress(full_address)
+    let coords = { lat: parseFloat(lat), lng: parseFloat(lng) }
+    let city = '', state = '', zip_code = ''
+
+    // If no coords provided, fall back to geocoding
+    if (!lat || !lng) {
+      const geoResult = await geocodeAddress(full_address)
+      coords = { lat: geoResult.lat, lng: geoResult.lng }
+      city = geoResult.city
+      state = geoResult.state
+      zip_code = geoResult.zip_code
+    }
 
     // Add fuzzy offset for privacy
-    const fuzzyCoords = fuzzyLocation(geoResult.lat, geoResult.lng)
+    const fuzzyCoords = fuzzyLocation(coords.lat, coords.lng)
 
     // Insert listing
     const { data, error } = await supabase
@@ -94,11 +103,11 @@ export async function POST(request: NextRequest) {
         quantity,
         description,
         full_address,
-        city: geoResult.city,
-        state: geoResult.state,
-        zip_code: geoResult.zip_code,
-        latitude: geoResult.lat,
-        longitude: geoResult.lng,
+        city,
+        state,
+        zip_code,
+        latitude: coords.lat,
+        longitude: coords.lng,
         approximate_lat: fuzzyCoords.lat,
         approximate_lng: fuzzyCoords.lng,
         available_start,
