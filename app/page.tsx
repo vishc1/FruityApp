@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import Nav from '@/components/Nav'
+import LocationDetect from '@/components/LocationDetect'
 
 export default async function Home() {
   const supabase = await createClient()
@@ -36,6 +37,7 @@ export default async function Home() {
               🗺️ Find Free Fruit
             </Link>
           </div>
+          <LocationDetect />
         </div>
       </section>
 
