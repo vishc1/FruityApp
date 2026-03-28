@@ -29,10 +29,11 @@ export async function GET(
   // Count pickups given (completed requests where user owns the listing)
   const { data: givenRequests } = await supabase
     .from('pickup_requests')
-    .select('listings:listing_id(user_id)')
+    .select('listings:listing_id!inner(user_id)')
     .eq('status', 'completed')
+    .eq('listings.user_id', id)
 
-  const pickupsGiven = (givenRequests || []).filter((r: any) => r.listings?.user_id === id).length
+  const pickupsGiven = (givenRequests || []).length
 
   // Ratings
   const { data: ratingsData } = await supabase

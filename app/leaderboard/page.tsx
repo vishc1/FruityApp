@@ -2,17 +2,6 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import Nav from '@/components/Nav'
 
-async function getLeaderboard() {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/leaderboard`, {
-      cache: 'no-store',
-    })
-    if (!res.ok) return []
-    return res.json()
-  } catch {
-    return []
-  }
-}
 
 function StarDisplay({ avg, count }: { avg: number | null; count: number }) {
   if (!avg) return <span className="text-gray-400 text-sm">No ratings</span>

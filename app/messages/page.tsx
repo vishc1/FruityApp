@@ -16,11 +16,6 @@ interface PickupRequest {
     city: string
     state: string
   }
-  listing?: {
-    fruit_type: string
-    city: string
-    state: string
-  }
 }
 
 interface Message {

@@ -38,7 +38,7 @@ export async function GET(
     .from('messages')
     .select(`
       *,
-      users:sender_id (
+      sender:sender_id (
         id,
         display_name,
         email
@@ -104,7 +104,7 @@ export async function POST(
       })
       .select(`
         *,
-        users:sender_id (
+        sender:sender_id (
           id,
           display_name,
           email
