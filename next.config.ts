@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
-    // Disable the middleware deprecation warning
     serverActions: {
       bodySizeLimit: '2mb',
     },
@@ -10,6 +9,14 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  headers: async () => [
+    {
+      source: '/(.*)',
+      headers: [
+        { key: 'Cache-Control', value: 'no-store, must-revalidate' },
+      ],
+    },
+  ],
 };
 
 export default nextConfig;
