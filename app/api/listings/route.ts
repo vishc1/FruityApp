@@ -97,6 +97,8 @@ export async function POST(request: NextRequest) {
         city: geoResult.city,
         state: geoResult.state,
         zip_code: geoResult.zip_code,
+        latitude: geoResult.lat,
+        longitude: geoResult.lng,
         approximate_lat: fuzzyCoords.lat,
         approximate_lng: fuzzyCoords.lng,
         available_start,
