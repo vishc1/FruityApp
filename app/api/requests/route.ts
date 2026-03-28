@@ -19,9 +19,7 @@ export async function GET(request: NextRequest) {
       .from('pickup_requests')
       .select(`
         *,
-        listings:listing_id (
-          id, fruit_type, quantity, city, state
-        )
+        listings:listing_id (*)
       `)
       .eq('requester_id', user.id)
       .in('status', ['completed', 'declined', 'cancelled', 'expired'])
@@ -38,9 +36,7 @@ export async function GET(request: NextRequest) {
       .from('pickup_requests')
       .select(`
         *,
-        listings:listing_id (
-          id, fruit_type, quantity, city, state, approximate_lat, approximate_lng, full_address, status
-        )
+        listings:listing_id (*)
       `)
       .eq('requester_id', user.id)
       .order('created_at', { ascending: false })
@@ -76,9 +72,7 @@ export async function GET(request: NextRequest) {
       .from('pickup_requests')
       .select(`
         *,
-        listings:listing_id (
-          id, fruit_type, quantity, user_id, full_address
-        ),
+        listings:listing_id (*),
         users:requester_id (
           id,
           display_name,
