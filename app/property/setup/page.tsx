@@ -112,6 +112,27 @@ export default function PropertySetupPage() {
           <p className="text-gray-600">Set your home address so you can create fruit listings.</p>
         </div>
 
+        {/* Quick detect banner */}
+        {mode === 'auto' && propertyOptions.length === 0 && (
+          <button
+            onClick={detectLocation}
+            disabled={detecting}
+            className="w-full flex items-center justify-center gap-3 bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-4 rounded-xl shadow-lg mb-6 transition-colors disabled:opacity-60 text-lg"
+          >
+            {detecting ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                Detecting your location...
+              </>
+            ) : (
+              <>
+                <span className="text-2xl">📍</span>
+                Find My House
+              </>
+            )}
+          </button>
+        )}
+
         {/* Mode Toggle */}
         <div className="flex gap-2 mb-6 bg-white rounded-xl shadow-sm p-1 w-fit">
           <button

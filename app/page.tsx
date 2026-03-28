@@ -38,6 +38,14 @@ export default async function Home() {
             </Link>
           </div>
           <LocationDetect />
+          <div className="mt-4">
+            <Link
+              href="/property/setup"
+              className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-orange-600 transition-colors"
+            >
+              🏠 Set up your property to list fruit
+            </Link>
+          </div>
         </div>
       </section>
 
