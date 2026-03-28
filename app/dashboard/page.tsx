@@ -348,9 +348,15 @@ export default function DashboardPage() {
                     {getStatusBadge(listing.status)}
                   </div>
                   <p className="text-gray-500 text-sm mb-1"><span className="font-medium text-gray-700">Qty:</span> {listing.quantity}</p>
-                  <p className="text-gray-400 text-xs mb-3">
+                  <p className="text-gray-400 text-xs mb-1">
                     {new Date(listing.available_start).toLocaleDateString()} – {new Date(listing.available_end).toLocaleDateString()}
                   </p>
+                  {(() => {
+                    const daysLeft = Math.ceil((new Date(listing.available_end).getTime() - Date.now()) / 86400000)
+                    if (daysLeft < 0) return <p className="text-xs text-red-500 font-semibold mb-2">⚠️ Expired — consider removing or updating</p>
+                    if (daysLeft <= 3) return <p className="text-xs text-orange-500 font-semibold mb-2">⏰ Expires in {daysLeft} day{daysLeft !== 1 ? 's' : ''}</p>
+                    return null
+                  })()}
                   {/* Availability status picker */}
                   <div className="mb-3">
                     <label className="text-xs font-medium text-gray-500 block mb-1">Availability</label>

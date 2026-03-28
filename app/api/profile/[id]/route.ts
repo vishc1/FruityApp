@@ -26,6 +26,13 @@ export async function GET(
     .eq('user_id', id)
     .eq('status', 'active')
 
+  // Check if user has a verified property
+  const { data: property } = await supabase
+    .from('properties')
+    .select('is_verified')
+    .eq('user_id', id)
+    .single()
+
   // Count pickups given (completed requests where user owns the listing)
   const { data: givenRequests } = await supabase
     .from('pickup_requests')
@@ -52,5 +59,6 @@ export async function GET(
     pickups_given: pickupsGiven,
     avg_rating: avgRating,
     rating_count: stars.length,
+    is_verified: property?.is_verified || false,
   })
 }

@@ -20,7 +20,8 @@ export default function NewListingPage() {
     full_address: '',
     available_start: '',
     available_end: '',
-    pickup_notes: ''
+    pickup_notes: '',
+    photo_url: ''
   })
 
   useEffect(() => {
@@ -224,6 +225,25 @@ export default function NewListingPage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
             </div>
+          </div>
+
+          {/* Photo URL */}
+          <div>
+            <label htmlFor="photo_url" className="block text-sm font-medium text-gray-700 mb-2">
+              Photo URL (optional)
+            </label>
+            <input
+              type="url"
+              id="photo_url"
+              name="photo_url"
+              value={formData.photo_url}
+              onChange={handleChange}
+              placeholder="https://... (link to a photo of your fruit or tree)"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            />
+            {formData.photo_url && (
+              <img src={formData.photo_url} alt="Preview" className="mt-2 h-32 w-full object-cover rounded-lg" onError={e => (e.currentTarget.style.display = 'none')} />
+            )}
           </div>
 
           {/* Pickup Notes */}

@@ -27,11 +27,12 @@ export async function GET(request: NextRequest) {
     .select('*')
     .order('created_at', { ascending: false })
 
+  const today = new Date().toISOString().split('T')[0]
+
   if (userId) {
-    // Profile view: show all non-cancelled listings for this user
     query = query.eq('user_id', userId).neq('status', 'cancelled')
   } else {
-    query = query.eq('status', 'active')
+    query = query.eq('status', 'active').gte('available_end', today)
   }
 
   if (fruitType && fruitType !== 'all') {
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json()
-    const { fruit_type, quantity, description, full_address, available_start, available_end, pickup_notes, lat, lng } = body
+    const { fruit_type, quantity, description, full_address, available_start, available_end, pickup_notes, lat, lng, photo_url } = body
 
     // Validate required fields
     if (!fruit_type || !quantity || !full_address || !available_start || !available_end) {
@@ -119,6 +120,7 @@ export async function POST(request: NextRequest) {
         available_start,
         available_end,
         pickup_notes,
+        photo_url: photo_url || null,
         availability_status: 'available',
       })
       .select()

@@ -83,3 +83,4 @@ DO $$ BEGIN
     CREATE POLICY announcements_update ON announcements FOR UPDATE USING (auth.uid() = author_id);
   END IF;
 END $$;
+

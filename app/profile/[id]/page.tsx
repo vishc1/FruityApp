@@ -15,6 +15,7 @@ interface Profile {
   pickups_given: number
   avg_rating: number | null
   rating_count: number
+  is_verified: boolean
 }
 
 interface Review {
@@ -112,7 +113,14 @@ export default function ProfilePage() {
               🌳
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-gray-900">{profile.display_name}</h1>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-2xl font-bold text-gray-900">{profile.display_name}</h1>
+                {profile.is_verified && (
+                  <span className="inline-flex items-center gap-1 bg-green-100 text-green-800 text-xs font-semibold px-2 py-0.5 rounded-full">
+                    ✓ Verified Neighbor
+                  </span>
+                )}
+              </div>
               <p className="text-gray-500 text-sm mb-3">Member since {memberYear}</p>
               <StarRow avg={profile.avg_rating} count={profile.rating_count} />
               <div className="flex gap-6 mt-4">

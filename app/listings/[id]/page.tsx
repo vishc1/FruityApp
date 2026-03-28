@@ -210,6 +210,12 @@ export default function ListingDetailPage() {
             </div>
           </div>
 
+          {(listing as any).photo_url && (
+            <div className="mb-6">
+              <img src={(listing as any).photo_url} alt={listing.fruit_type} className="w-full max-h-64 object-cover rounded-xl" onError={e => (e.currentTarget.style.display = 'none')} />
+            </div>
+          )}
+
           {listing.description && (
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Description</h2>
