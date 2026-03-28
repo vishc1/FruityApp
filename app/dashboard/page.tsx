@@ -100,10 +100,13 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    checkUser()
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      if (session?.user) { setUser(session.user); setLoading(false) }
-      // Don't redirect here — checkUser handles the initial redirect
+      if (session?.user) {
+        setUser(session.user)
+        setLoading(false)
+      } else if (_event === 'INITIAL_SESSION' || _event === 'SIGNED_OUT') {
+        router.push('/login')
+      }
     })
     return () => { subscription.unsubscribe() }
   }, [])
@@ -126,21 +129,6 @@ export default function DashboardPage() {
         .catch(() => {})
     }
   }, [user])
-
-  const checkUser = async () => {
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
-    if (session?.user) { setUser(session.user); setLoading(false); return }
-    const { data: { user } } = await supabase.auth.getUser()
-    if (user) { setUser(user); setLoading(false); return }
-    // Retry up to 3 times with increasing delays
-    for (const delay of [500, 1000, 1500]) {
-      await new Promise(r => setTimeout(r, delay))
-      const { data: { session: retry } } = await supabase.auth.getSession()
-      if (retry?.user) { setUser(retry.user); setLoading(false); return }
-    }
-    router.push('/login')
-  }
 
   const fetchMyListings = async () => {
     setLoading(true)

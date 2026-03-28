@@ -68,16 +68,7 @@ export default function LoginPage() {
             }
 
             toast.success('Account created! Redirecting...')
-
-            // Keep loading state to prevent form resubmission
-            // Force a full page reload to dashboard
-            console.log('Setting up redirect to dashboard after signup...')
-            setTimeout(() => {
-              console.log('Redirecting to dashboard now...')
-              window.location.replace('/dashboard')
-            }, 1000)
-
-            // Don't set loading to false
+            router.push('/dashboard')
             return
           } else {
             // No session - email confirmation required
@@ -139,18 +130,7 @@ export default function LoginPage() {
         }
 
         toast.success('Welcome back!')
-
-        // Keep loading state to prevent form resubmission
-        // Don't set loading to false - we're redirecting
-
-        // Force a full page reload to dashboard
-        console.log('Setting up redirect to dashboard...')
-        setTimeout(() => {
-          console.log('Redirecting to dashboard now...')
-          window.location.replace('/dashboard')
-        }, 1000)
-
-        // Don't execute finally block
+        router.push('/dashboard')
         return
       }
     } catch (error: any) {
