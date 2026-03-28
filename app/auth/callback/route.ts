@@ -42,20 +42,6 @@ export async function GET(request: NextRequest) {
         // Redirect to dashboard with session
         const response = NextResponse.redirect(`${origin}/dashboard`)
 
-        // Set long-lasting session cookies (7 days)
-        const cookieStore = request.cookies
-        cookieStore.getAll().forEach(cookie => {
-          if (cookie.name.startsWith('sb-')) {
-            response.cookies.set(cookie.name, cookie.value, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === 'production',
-              sameSite: 'lax',
-              maxAge: 60 * 60 * 24 * 7, // 7 days
-              path: '/',
-            })
-          }
-        })
-
         return response
       }
     } catch (err) {
