@@ -204,6 +204,16 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
+              {!isSignUp && (
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  disabled={loading}
+                  className="mt-2 text-sm text-orange-600 hover:text-orange-700 font-medium disabled:opacity-50"
+                >
+                  Forgot password?
+                </button>
+              )}
             </div>
 
             <button
