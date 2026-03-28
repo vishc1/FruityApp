@@ -11,7 +11,27 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [isSignUp, setIsSignUp] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [showForgot, setShowForgot] = useState(false)
   const router = useRouter()
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error('Enter your email address first')
+      return
+    }
+    setLoading(true)
+    const supabase = createClient()
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+    })
+    setLoading(false)
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success('Password reset email sent! Check your inbox.')
+      setShowForgot(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -195,14 +215,23 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
             <button
               onClick={() => setIsSignUp(!isSignUp)}
               disabled={loading}
-              className="text-sm text-orange-600 hover:text-orange-700 font-medium disabled:opacity-50"
+              className="block w-full text-sm text-orange-600 hover:text-orange-700 font-medium disabled:opacity-50"
             >
               {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
             </button>
+            {!isSignUp && (
+              <button
+                onClick={handleForgotPassword}
+                disabled={loading}
+                className="block w-full text-sm text-gray-500 hover:text-gray-700 disabled:opacity-50"
+              >
+                Forgot password?
+              </button>
+            )}
           </div>
 
           <div className="mt-4 text-center">
