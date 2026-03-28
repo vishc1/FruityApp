@@ -148,38 +148,29 @@ export async function getNearbyAddresses(lat: number, lng: number): Promise<Arra
       const baseNumber = parseInt(houseNumber.replace(/\D/g, ''))
 
       if (!isNaN(baseNumber)) {
-        // Option 2: Previous house number (e.g., if detected 123, show 121)
-        const prevNumber = baseNumber - 2
-        if (prevNumber > 0) {
-          const prevLat = lat - 0.00002 // ~2 meters south
-          results.push({
-            address: `${prevNumber} ${street}, ${city}, ${state} ${zip}`,
-            city,
-            state,
-            zip_code: zip,
-            lat: prevLat,
-            lng: lng,
-            distance: calculateDistance(lat, lng, prevLat, lng)
-          })
-        }
-
-        // Option 3: Next house number (e.g., if detected 123, show 125)
-        const nextNumber = baseNumber + 2
-        const nextLat = lat + 0.00002 // ~2 meters north
-        results.push({
-          address: `${nextNumber} ${street}, ${city}, ${state} ${zip}`,
-          city,
-          state,
-          zip_code: zip,
-          lat: nextLat,
-          lng: lng,
-          distance: calculateDistance(lat, lng, nextLat, lng)
+        // Generate 4 nearby house numbers (2 before, 2 after)
+        const offsets = [-4, -2, 2, 4]
+        offsets.forEach((offset, i) => {
+          const nearNumber = baseNumber + offset
+          if (nearNumber > 0) {
+            const latOffset = offset * 0.00001
+            const nearLat = lat + latOffset
+            results.push({
+              address: `${nearNumber} ${street}, ${city}, ${state} ${zip}`,
+              city,
+              state,
+              zip_code: zip,
+              lat: nearLat,
+              lng: lng,
+              distance: calculateDistance(lat, lng, nearLat, lng)
+            })
+          }
         })
       }
     }
 
-    // Return up to 3 results
-    return results.slice(0, 3)
+    // Return up to 5 results
+    return results.slice(0, 5)
   } catch (error: any) {
     console.error('Error getting nearby addresses:', error)
     throw new Error(error.message || 'Failed to get nearby addresses')
