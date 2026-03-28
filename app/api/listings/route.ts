@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from('listings')
-    .select('id, user_id, fruit_type, quantity, description, city, state, approximate_lat, approximate_lng, available_start, available_end, pickup_notes, status, availability_status, created_at')
+    .select('id, user_id, fruit_type, quantity, description, city, state, approximate_lat, approximate_lng, available_start, available_end, pickup_notes, status, created_at')
     .order('created_at', { ascending: false })
 
   if (userId) {

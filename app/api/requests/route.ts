@@ -60,12 +60,23 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(filteredData)
   } else {
-    // Requests for current user's listings
+    // Get user's listing IDs first
+    const { data: userListings } = await supabase
+      .from('listings')
+      .select('id')
+      .eq('user_id', user.id)
+
+    const listingIds = (userListings || []).map((l: any) => l.id)
+
+    if (listingIds.length === 0) {
+      return NextResponse.json([])
+    }
+
     const { data, error } = await supabase
       .from('pickup_requests')
       .select(`
         *,
-        listings!inner (
+        listings:listing_id (
           id, fruit_type, quantity, user_id, full_address
         ),
         users:requester_id (
@@ -74,7 +85,7 @@ export async function GET(request: NextRequest) {
           email
         )
       `)
-      .eq('listings.user_id', user.id)
+      .in('listing_id', listingIds)
       .order('created_at', { ascending: false })
 
     if (error) {
