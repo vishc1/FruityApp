@@ -2,10 +2,23 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import Nav from '@/components/Nav'
 import LocationDetect from '@/components/LocationDetect'
+import { calculateImpact } from '@/lib/impact'
 
 export default async function Home() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+
+  // Fetch live impact stats for the hero counter
+  const { data: completedData } = await supabase
+    .from('pickup_requests')
+    .select('listings:listing_id (fruit_type, quantity)')
+    .eq('status', 'completed')
+
+  const pickups = (completedData || [])
+    .map((r: any) => r.listings)
+    .filter(Boolean) as { fruit_type: string; quantity: string }[]
+
+  const impact = calculateImpact(pickups)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-green-50">
@@ -46,6 +59,38 @@ export default async function Home() {
               🏠 Set up your property to list fruit
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Live Impact Counter */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-3xl p-8 text-white text-center">
+          <h3 className="text-2xl font-bold mb-2">Our Community&apos;s Environmental Impact</h3>
+          <p className="text-green-100 mb-8 text-sm">Updated in real time as pickups are completed</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            <div>
+              <div className="text-4xl font-bold">{impact.total_lbs > 0 ? impact.total_lbs.toLocaleString() : '0'}</div>
+              <div className="text-green-100 text-sm mt-1">lbs of fruit rescued</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold">{impact.total_co2_lbs > 0 ? impact.total_co2_lbs.toLocaleString() : '0'}</div>
+              <div className="text-green-100 text-sm mt-1">lbs of CO₂ prevented</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold">{impact.total_water_gallons > 0 ? impact.total_water_gallons.toLocaleString() : '0'}</div>
+              <div className="text-green-100 text-sm mt-1">gallons of water saved</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold">{impact.completed_pickups.toLocaleString()}</div>
+              <div className="text-green-100 text-sm mt-1">pickups completed</div>
+            </div>
+          </div>
+          <Link
+            href="/impact"
+            className="inline-block mt-6 bg-white text-green-700 font-semibold px-6 py-2 rounded-lg text-sm hover:bg-green-50 transition-colors"
+          >
+            View Full Impact Report →
+          </Link>
         </div>
       </section>
 

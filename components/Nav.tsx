@@ -58,6 +58,7 @@ export default function Nav({ initialUser }: NavProps) {
           {/* Nav links */}
           <nav className="flex items-center gap-5 overflow-x-auto">
             {link('/map', 'Find Fruit')}
+            {link('/impact', 'Impact')}
             {link('/announcements', 'Community')}
             {link('/leaderboard', 'Leaderboard')}
             {user !== undefined && user !== null ? (
