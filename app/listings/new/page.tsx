@@ -7,11 +7,13 @@ import Nav from '@/components/Nav'
 import { FRUIT_TYPES, QUANTITY_OPTIONS } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { Property } from '@/lib/types/database'
+import { createClient } from '@/lib/supabase/client'
 
 export default function NewListingPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [loadingProperty, setLoadingProperty] = useState(true)
+  const [authChecked, setAuthChecked] = useState(false)
   const [property, setProperty] = useState<Property | null>(null)
   const [formData, setFormData] = useState({
     fruit_type: '',
@@ -25,7 +27,15 @@ export default function NewListingPage() {
   })
 
   useEffect(() => {
-    fetchProperty()
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) {
+        router.replace('/login')
+      } else {
+        setAuthChecked(true)
+        fetchProperty()
+      }
+    })
   }, [])
 
   const fetchProperty = async () => {
@@ -85,6 +95,14 @@ export default function NewListingPage() {
       ...prev,
       [e.target.name]: e.target.value
     }))
+  }
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600" />
+      </div>
+    )
   }
 
   return (

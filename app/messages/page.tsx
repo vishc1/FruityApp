@@ -23,7 +23,7 @@ interface Message {
   content: string
   sender_id: string
   created_at: string
-  sender: { email: string }
+  sender: { id: string; display_name: string | null; email: string }
 }
 
 export default function MessagesPage() {
@@ -264,7 +264,7 @@ export default function MessagesPage() {
                         const isSent = msg.sender_id === currentUserId
                         return (
                           <div key={msg.id} className={`flex flex-col ${isSent ? 'items-end' : 'items-start'}`}>
-                            {!isSent && <div className="text-xs text-gray-500 mb-1">{msg.sender?.email}</div>}
+                            {!isSent && <div className="text-xs text-gray-500 mb-1">{msg.sender?.display_name || msg.sender?.email?.split('@')[0]}</div>}
                             <div className={`rounded-2xl px-4 py-3 max-w-[70%] ${isSent ? 'bg-orange-500 text-white rounded-br-sm' : 'bg-gray-100 text-gray-900 rounded-bl-sm'}`}>
                               <p>{msg.content}</p>
                               <p className={`text-xs mt-1 ${isSent ? 'text-orange-100' : 'text-gray-500'}`}>

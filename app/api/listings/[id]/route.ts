@@ -69,10 +69,33 @@ export async function PATCH(
   try {
     const body = await request.json()
 
-    // Update listing (RLS will ensure user owns it)
+    // Allowlist only the fields owners are permitted to change
+    const {
+      availability_status,
+      description,
+      pickup_notes,
+      available_start,
+      available_end,
+      photo_url,
+      quantity,
+    } = body
+
+    const updates: Record<string, any> = {}
+    if (availability_status !== undefined) updates.availability_status = availability_status
+    if (description !== undefined) updates.description = description
+    if (pickup_notes !== undefined) updates.pickup_notes = pickup_notes
+    if (available_start !== undefined) updates.available_start = available_start
+    if (available_end !== undefined) updates.available_end = available_end
+    if (photo_url !== undefined) updates.photo_url = photo_url
+    if (quantity !== undefined) updates.quantity = quantity
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json({ error: 'Nothing to update' }, { status: 400 })
+    }
+
     const { data, error } = await supabase
       .from('listings')
-      .update(body)
+      .update(updates)
       .eq('id', id)
       .eq('user_id', user.id)
       .select()

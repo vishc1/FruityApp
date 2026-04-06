@@ -277,7 +277,13 @@ export default function DashboardPage() {
     )
   }
 
-  if (!user) return null
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600" />
+      </div>
+    )
+  }
 
   const pendingIncoming = incomingRequests.filter(r => r.status === 'pending').length
 
