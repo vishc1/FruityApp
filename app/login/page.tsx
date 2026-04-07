@@ -51,6 +51,8 @@ export default function LoginPage() {
 
         if (error) {
           toast.error(error.message)
+          setLoading(false)
+          return
         } else if (data.user) {
           // Check if email confirmation is required
           if (data.session) {
@@ -96,6 +98,7 @@ export default function LoginPage() {
           } else {
             toast.error(error.message)
           }
+          setLoading(false)
           return
         }
 
@@ -103,6 +106,7 @@ export default function LoginPage() {
         if (!data.user) {
           console.error('No user in response')
           toast.error('Sign in failed. Please try again.')
+          setLoading(false)
           return
         }
 
