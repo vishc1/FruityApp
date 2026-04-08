@@ -73,10 +73,16 @@ export default function AnnouncementsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this announcement?')) return
-    const res = await fetch(`/api/announcements/${id}`, { method: 'DELETE' })
-    if (res.ok) {
-      toast.success('Deleted')
-      fetchAnnouncements()
+    try {
+      const res = await fetch(`/api/announcements/${id}`, { method: 'DELETE' })
+      if (res.ok) {
+        toast.success('Deleted')
+        fetchAnnouncements()
+      } else {
+        toast.error('Failed to delete')
+      }
+    } catch {
+      toast.error('Failed to delete')
     }
   }
 

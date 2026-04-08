@@ -46,6 +46,7 @@ export default function MapPage() {
         params.set('radius', String(radiusMiles))
       }
       const response = await fetch(`/api/listings?${params}`)
+      if (!response.ok) throw new Error('Failed to fetch listings')
       const data = await response.json()
       setListings(data)
     } catch {

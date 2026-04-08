@@ -86,10 +86,7 @@ export default function LoginPage() {
           password,
         })
 
-        console.log('Sign in response:', { data, error })
-
         if (error) {
-          console.error('Sign in error:', error)
           // Provide more helpful error messages
           if (error.message.includes('Email not confirmed')) {
             toast.error('Please confirm your email before signing in. Check your inbox for the confirmation link.')
@@ -104,13 +101,10 @@ export default function LoginPage() {
 
         // Check if we got a user back
         if (!data.user) {
-          console.error('No user in response')
           toast.error('Sign in failed. Please try again.')
           setLoading(false)
           return
         }
-
-        console.log('Sign in successful, user:', data.user.email)
 
         // Ensure user profile exists
         try {
