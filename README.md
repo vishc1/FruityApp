@@ -76,4 +76,4 @@ MIT
 
 ## Credits
 
-Built with [Claude Code](https://claude.com/claude-code)
+Built with help from [Claude Code](https://claude.com/claude-code)
