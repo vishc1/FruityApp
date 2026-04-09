@@ -131,6 +131,39 @@ export async function PATCH(
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    // Keep listing status in sync with request status
+    if (status === 'accepted') {
+      // Hide listing from public map
+      await supabase
+        .from('listings')
+        .update({ status: 'pending' })
+        .eq('id', pickupRequest.listing_id)
+
+      // Decline all other pending requests for this listing
+      await supabase
+        .from('pickup_requests')
+        .update({ status: 'declined' })
+        .eq('listing_id', pickupRequest.listing_id)
+        .eq('status', 'pending')
+        .neq('id', id)
+
+    } else if (status === 'completed') {
+      // Mark listing as completed
+      await supabase
+        .from('listings')
+        .update({ status: 'completed' })
+        .eq('id', pickupRequest.listing_id)
+
+    } else if (status === 'declined' || status === 'cancelled') {
+      // If this request was previously accepted, restore listing to active
+      if (pickupRequest.status === 'accepted') {
+        await supabase
+          .from('listings')
+          .update({ status: 'active' })
+          .eq('id', pickupRequest.listing_id)
+      }
+    }
+
     return NextResponse.json(data)
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 })
